@@ -1,14 +1,13 @@
 import sys
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from canvas_lgr3 import Canvas3
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow,QLabel
+from painting import MainWidget
 from new_project import new_project
 from opencv import opencv
 from Rake_wave import Rake_wave
 from reflection_coe import reflection_coe
 from synthetic_seismogram import synthetic_seismogram
 from spectrum_diagram import spectrum_diagram
-
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -33,9 +32,11 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_5.setObjectName("pushButton_5")
         self.pushButton_6 = QtWidgets.QPushButton(self.splitter)
         self.pushButton_6.setObjectName("pushButton_6")
-        self.widget = Canvas3(self.Tab)
-        self.widget.setGeometry(QtCore.QRect(360, 10, 591, 461))
+
+        self.widget = MainWidget(self.Tab)
+        self.widget.setGeometry(QtCore.QRect(360, 10, 650, 500))
         self.widget.setObjectName("widget")
+
         self.splitter_4 = QtWidgets.QSplitter(self.Tab)
         self.splitter_4.setGeometry(QtCore.QRect(0, 250, 331, 161))
         self.splitter_4.setOrientation(QtCore.Qt.Vertical)
@@ -92,13 +93,16 @@ class Ui_MainWindow(QMainWindow):
         self.radioButton_2 = QtWidgets.QRadioButton(self.layoutWidget_2)
         self.radioButton_2.setObjectName("radioButton_2")
         self.horizontalLayout_4.addWidget(self.radioButton_2)
+        #combo box
         self.comboBox = QtWidgets.QComboBox(self.Tab)
         self.comboBox.setGeometry(QtCore.QRect(180, 10, 151, 31))
         self.comboBox.setObjectName("comboBox")
+
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
-        self.comboBox.addItem("")
+
+
         self.splitter_5 = QtWidgets.QSplitter(self.Tab)
         self.splitter_5.setGeometry(QtCore.QRect(10, 50, 141, 131))
         self.splitter_5.setOrientation(QtCore.Qt.Vertical)
@@ -160,6 +164,7 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_4.clicked.connect(self.reflection_coe)
         self.pushButton_5.clicked.connect(self.synthetic_seismogram)
         self.pushButton_6.clicked.connect(self.spectrum_diagram)
+        #确定边缘检测算法的类型
         self.pushButton_7.clicked.connect(self.opencv)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -175,10 +180,9 @@ class Ui_MainWindow(QMainWindow):
         self.radioButton.setText(_translate("MainWindow", "默认值"))
         self.label_4.setText(_translate("MainWindow", "设置道间距："))
         self.radioButton_2.setText(_translate("MainWindow", "默认值"))
-        self.comboBox.setItemText(0, _translate("MainWindow", "canny算子"))
-        self.comboBox.setItemText(1, _translate("MainWindow", "Scharr算子"))
-        self.comboBox.setItemText(2, _translate("MainWindow", "sobel算子"))
-        self.comboBox.setItemText(3, _translate("MainWindow", "log算子"))
+        self.comboBox.setItemText(0, _translate("MainWindow", "Scharr算子"))
+        self.comboBox.setItemText(1, _translate("MainWindow", "sobel算子"))
+        self.comboBox.setItemText(2, _translate("MainWindow", "log算子"))
         self.pushButton.setText(_translate("MainWindow", "新建正演文件"))
         self.pushButton_4.setText(_translate("MainWindow", "设置反射系数"))
         self.pushButton_7.setText(_translate("MainWindow", "图像识别"))
@@ -192,39 +196,35 @@ class Ui_MainWindow(QMainWindow):
         self.menu_5.setTitle(_translate("MainWindow", "帮助"))
         self.actionda.setText(_translate("MainWindow", "打开文件"))
         self.action1.setText(_translate("MainWindow", "保存文件"))
-
     #1新建正演项目
     def new_project(self):
-        ui_1.show()
+        self.ui_1 = new_project()
+        self.ui_1.show()
     #2图像识别
     def opencv(self):
-        ui_2.show()
+        self.type = self.comboBox.currentText()
+        self.ui_2 = opencv(self.type)
+        self.ui_2.show()
     #3雷克子波
     def Rake_wave(self):
-        ui_3.show()
+        self.ui_3 = Rake_wave()
+        self.ui_3.show()
     #4设置反射系数
     def reflection_coe(self):
-        ui_4.show()
+        self.ui_4 = reflection_coe()
+        self.ui_4.show()
     #5合成地震记录
     def synthetic_seismogram(self):
-        ui_5.show()
+        self.ui_5 = synthetic_seismogram()
+        self.ui_5.show()
     #6频谱图
     def spectrum_diagram(self):
-        ui_6.show()
-
-
+        self.ui_6 = spectrum_diagram()
+        self.ui_6.show()
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     MainWindow = QMainWindow()
     ui = Ui_MainWindow()
-
-    ui_1 = new_project()
-    ui_2 = opencv()
-    ui_3 = Rake_wave()
-    ui_4 = reflection_coe()
-    ui_5 = synthetic_seismogram()
-    ui_6 = spectrum_diagram()
-
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
