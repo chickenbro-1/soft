@@ -159,15 +159,3 @@ class new_project(QMainWindow):
         f2.write(b)
         f2.close()
         QMessageBox.warning(self, " ", "保存成功！", QMessageBox.Yes | QMessageBox.No)
-        '''
-        app = QApplication(sys.argv)  # 所有pyqt5必须创建一个QApplication对象
-        w = QWidget()  # 没有父类的widget将被作为窗口使用
-        # 退出确定框
-        reply = QMessageBox.question(w, '保存结果', '确定退出？', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel,QMessageBox.Cancel)
-        if reply == QMessageBox.Yes:
-            print('退出')
-        else:
-            print('不退出')
-        '''
-
-

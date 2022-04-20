@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore,QtWidgets
+from PyQt5.QtCore import Qt
 from painting import MainWidget
 from new_project import new_project
 from opencv import opencv
@@ -10,6 +11,9 @@ from synthetic_seismogram import synthetic_seismogram
 from spectrum_diagram import spectrum_diagram
 import qdarkstyle
 import os
+import pathlib
+import re
+import json
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -223,9 +227,9 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_7.setText(_translate("MainWindow", "图像识别"))
         self.pushButton_3.setText(_translate("MainWindow", "设置雷克子波"))
         self.comboBox_2.setItemText(0, _translate("MainWindow", "无经典模型"))
-        self.label.setText(_translate("MainWindow", "采样时间："))
-        self.label_3.setText(_translate("MainWindow", "主频："))
-        self.label_2.setText(_translate("MainWindow", "采样率："))
+        self.label.setText(_translate("MainWindow", "采样时间（S）"))
+        self.label_3.setText(_translate("MainWindow", "主频（HZ）"))
+        self.label_2.setText(_translate("MainWindow", "采样间隔（S）"))
         self.radioButton.setText(_translate("MainWindow", "默认值"))
         self.label_4.setText(_translate("MainWindow", "设置道间距："))
         self.radioButton_2.setText(_translate("MainWindow", "默认值"))
@@ -279,8 +283,25 @@ class Ui_MainWindow(QMainWindow):
             self.ui_4.show()
     #5合成地震记录
     def synthetic_seismogram(self):
-        self.ui_5 = synthetic_seismogram()
-        #self.ui_5.show()
+
+        my_file = pathlib.Path("project.json")
+        if my_file.exists():
+            with open(my_file, "r") as fr:
+                f_ = json.load(fr)
+                str_1 = re.findall("'sampling_rate': '(.*?)'", str(f_))
+                str_2 = re.findall("'Dominant_frequency': '(.*?)'", str(f_))
+                str_3 = re.findall("'sampling_time': '(.*?)'", str(f_))
+                str_4 = re.search("'xishu'", str(f_))
+                if len(str_1) == 0 or len(str_2) == 0 or len(str_3) == 0 or str_4 == None:
+                    QMessageBox.warning(self, "警告", "请先确定主频，间隔，时间并设置雷克子波！", QMessageBox.Yes | QMessageBox.No)
+                    return
+                else:
+                    self.ui_5 = synthetic_seismogram()
+        else:
+            QMessageBox.warning(self, "警告", "请先新建正演文件", QMessageBox.Yes | QMessageBox.No)
+            return
+
+
     #6频谱图
     def spectrum_diagram(self):
         self.ui_6 = spectrum_diagram()
@@ -298,7 +319,9 @@ class Ui_MainWindow(QMainWindow):
         self.lineEdit_4.setText("5")
 
 
+
 if __name__ == '__main__':
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     MainWindow = QMainWindow()

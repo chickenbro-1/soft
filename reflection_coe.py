@@ -5,8 +5,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import cv2
 import os.path
 class reflection_coe(QMainWindow):
-    def __init__(self):#,dt,t
+    def __init__(self):
         super(reflection_coe, self).__init__()
+        self.setWindowTitle("设置反射系数")
         self.file_name = "__data.png"
         if os.path.isfile(self.file_name) == False:
             QMessageBox.warning(self, "警告", "请先绘制图像！", QMessageBox.Yes | QMessageBox.Discard)
@@ -15,15 +16,15 @@ class reflection_coe(QMainWindow):
         self.retranslateUi(self)
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(435, 163)
+        Form.resize(615, 163)
         self.splitter = QtWidgets.QSplitter(Form)
-        self.splitter.setGeometry(QtCore.QRect(10, 30, 401, 111))
+        self.splitter.setGeometry(QtCore.QRect(5, 15, 600, 111))
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setObjectName("splitter")
         self.label_5 = QtWidgets.QLabel(self.splitter)
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(12)
+        font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
         self.label_5.setFont(font)
@@ -33,7 +34,7 @@ class reflection_coe(QMainWindow):
         self.pushButton = QtWidgets.QPushButton(self.splitter)
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(12)
+        font.setPointSize(10)
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
         self.lineEdit.raise_()
@@ -54,6 +55,11 @@ class reflection_coe(QMainWindow):
     def process(self):
         xishu = self.lineEdit.text()
         self.xishu = re.findall(r'-?\d+\.?\d*e?-?\d*?',xishu)
+        for i in list(self.xishu):
+            i = float(i)
+            if i <= float(-1) or i >= float(1):
+                QMessageBox.warning(self, " ", "反射系数错误，范围是-1到1之间", QMessageBox.Yes | QMessageBox.Discard)
+                return
         if len(self.xishu) == int(self.num-1):
             fjson = 'project.json'
             with open(fjson, 'r') as f:
@@ -62,10 +68,10 @@ class reflection_coe(QMainWindow):
             content.update(axis)
             with open(fjson, 'w') as f_new:
                 json.dump(content, f_new)
-
-            QMessageBox.warning(self, " ", "反射系数保存成功", QMessageBox.Yes | QMessageBox.Discard)
+            QMessageBox.warning(self, " ", "反射系数保存成功",  QMessageBox.Yes| QMessageBox.Discard)
         else:
             QMessageBox.warning(self, " ", "地层条数与反射系数个数不一致，请重新输入反射系数", QMessageBox.Yes | QMessageBox.Discard)
+
 
 
 
