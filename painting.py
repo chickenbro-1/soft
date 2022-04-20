@@ -27,7 +27,7 @@ class MainWidget(QWidget):
         
     def __InitView(self):
         ''' 初始化界面 '''
-        self.setFixedSize(650, 500)
+        self.setFixedSize(650, 475)
         self.setWindowTitle("PaintBoard Example PyQt5")
         
         #新建一个水平布局做为本窗体的主布局
@@ -51,10 +51,10 @@ class MainWidget(QWidget):
         self.__btn_Clear.clicked.connect(self.__paintBoard.Clear) 
         sub_layout.addWidget(self.__btn_Clear)
         
-        self.__btn_Quit = QPushButton("退出")
-        self.__btn_Quit.setParent(self) #设置父对象为本界面
-        self.__btn_Quit.clicked.connect(self.Quit)
-        sub_layout.addWidget(self.__btn_Quit)
+     #   self.__btn_Quit = QPushButton("退出")
+     #   self.__btn_Quit.setParent(self) #设置父对象为本界面
+      #  self.__btn_Quit.clicked.connect(self.Quit)
+      #  sub_layout.addWidget(self.__btn_Quit)
         
         self.__btn_Save = QPushButton("保存图片")
         self.__btn_Save.setParent(self)
@@ -82,15 +82,15 @@ class MainWidget(QWidget):
         self.__spinBox_penThickness.valueChanged.connect(self.on_PenThicknessChange)#关联spinBox值变化信号和函数on_PenThicknessChange
         sub_layout.addWidget(self.__spinBox_penThickness)
         
-        self.__label_penColor = QLabel(self)
-        self.__label_penColor.setText("画笔颜色")
-        self.__label_penColor.setFixedHeight(20)
-        sub_layout.addWidget(self.__label_penColor)
+       # self.__label_penColor = QLabel(self)
+       # self.__label_penColor.setText("画笔颜色")
+       # self.__label_penColor.setFixedHeight(20)
+      #  sub_layout.addWidget(self.__label_penColor)
         
-        self.__comboBox_penColor = QComboBox(self)
-        self.__fillColorList(self.__comboBox_penColor) #用各类颜色填充下拉列表
-        self.__comboBox_penColor.currentIndexChanged.connect(self.on_PenColorChange) #关联下拉列表的当前索引变动信号与函数on_PenColorChange
-        sub_layout.addWidget(self.__comboBox_penColor)
+        #self.__comboBox_penColor = QComboBox(self)
+       # self.__fillColorList(self.__comboBox_penColor) #用各类颜色填充下拉列表
+        #self.__comboBox_penColor.currentIndexChanged.connect(self.on_PenColorChange) #关联下拉列表的当前索引变动信号与函数on_PenColorChange
+      #  sub_layout.addWidget(self.__comboBox_penColor)
 
         main_layout.addLayout(sub_layout) #将子布局加入主布局
 
@@ -111,10 +111,10 @@ class MainWidget(QWidget):
 
         comboBox.setCurrentIndex(index_black)
         
-    def on_PenColorChange(self):
-        color_index = self.__comboBox_penColor.currentIndex()
-        color_str = self.__colorList[color_index]
-        self.__paintBoard.ChangePenColor(color_str)
+   # def on_PenColorChange(self):
+   #     color_index = self.__comboBox_penColor.currentIndex()
+    #    color_str = self.__colorList[color_index]
+  #      self.__paintBoard.ChangePenColor(color_str)
 
     def on_PenThicknessChange(self):
         penThickness = self.__spinBox_penThickness.value()
@@ -136,8 +136,8 @@ class MainWidget(QWidget):
             self.__paintBoard.EraserMode = False #退出橡皮擦模式
         
         
-    def Quit(self):
-        self.close()
+    #def Quit(self):
+    #    self.close()
 
 if __name__ == '__main__':
   app = QApplication(sys.argv)

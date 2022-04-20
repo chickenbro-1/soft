@@ -30,7 +30,11 @@ class PaintBoard(QWidget):
         
         self.__thickness = 10       #默认画笔粗细为10px
         self.__penColor = QColor("black")#设置默认画笔颜色为黑色
-        self.__colorList = QColor.colorNames() #获取颜色列表
+        self.__colorList = QColor.colorNames()[6:] #自动变化颜色列表
+      #  self.__colorList2=QColor.colorNames()[100:] #可供用户选择颜色列表
+        #print(len(self.__colorList))
+        #print(self.__colorList)
+        self.paint_times=0
      
     def __InitView(self):
         #设置界面的尺寸为__size
@@ -42,9 +46,10 @@ class PaintBoard(QWidget):
         self.update()
         self.__IsEmpty = True
         
-    def ChangePenColor(self, color="black"):
-        #改变画笔颜色
-        self.__penColor = QColor(color)
+    def ChangePenColor(self):#, color="black"):
+
+        self.__penColor=QColor(self.__colorList[self.paint_times])
+        return self.__penColor
         
     def ChangePenThickness(self, thickness=10):
         #改变画笔粗细
@@ -70,9 +75,12 @@ class PaintBoard(QWidget):
         self.__painter.drawPixmap(0,0,self.__board)
         self.__painter.end()
         
+        
     def mousePressEvent(self, mouseEvent):
         #鼠标按下时，获取鼠标的当前位置保存为上一次位置
         self.__currentPos =  mouseEvent.pos()
+        self.paint_times+=1
+        self.__penColor=self.ChangePenColor()
         self.__lastPos = self.__currentPos
         
         

@@ -1,9 +1,9 @@
-import sys
 import cv2 as cv
 import cv2
 import numpy as np
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import (QApplication, QDialog, QFileDialog, QGridLayout,QMessageBox,QLabel, QPushButton)
+from PyQt5.QtWidgets import *
+
 
 class opencv(QDialog):
     def __init__(self,type):
@@ -37,8 +37,10 @@ class opencv(QDialog):
         self.btnQuit.clicked.connect(self.close)
     def openSlot(self):
         # 调用打开文件diglog
+
         fileName, tmp = QFileDialog.getOpenFileName(
             self, 'Open Image', './__data', '*.png *.jpg *.bmp')
+
         if fileName is '':
             return
         # 采用opencv函数读取数据
@@ -47,22 +49,30 @@ class opencv(QDialog):
             return
         self.refreshShow()
     def saveSlot(self):
+        if self.img.size == 1:
+            QMessageBox.warning(self, "警告", "请先选择图片！", QMessageBox.Yes | QMessageBox.No)
+            return
         # 调用存储文件dialog
+        fileName = '__data.png'
+        '''
         fileName, tmp = QFileDialog.getSaveFileName(
             self, 'Save Image', './__data', '*.png *.jpg *.bmp', '*.png')
+        '''
         if fileName is '':
             return
-        if self.img.size == 1:
-            return
+
         # 调用opencv写入图像
         cv.imwrite(fileName, self.img)
+        QMessageBox.warning(self, " ", "识别后的图像保存成功", QMessageBox.Yes | QMessageBox.Discard)
     def processSlot(self):
         if self.img.size == 1:
+            QMessageBox.warning(self, "警告", "请先选择图片！", QMessageBox.Yes | QMessageBox.No)
             return
         maping = {
             'Scharr算子':self.Scharr(),
             'sobel算子':self.Sobel(),
             'log算子':self.Log(),
+            'canny算子': self.Canny(),
         }
         self.img = maping.get(self.type)
         self.refreshShow()
@@ -72,6 +82,7 @@ class opencv(QDialog):
         bytesPerLine = 3 * width
         self.qImg = QImage(self.img.data, width, height, bytesPerLine,
                            QImage.Format_RGB888).rgbSwapped()
+
         self.label.setPixmap(QPixmap.fromImage(self.qImg))
     def Sobel(self):
         x = cv2.Sobel(self.img, cv2.CV_16S, 1, 0)
@@ -79,7 +90,6 @@ class opencv(QDialog):
         absX = cv2.convertScaleAbs(x)
         absY = cv2.convertScaleAbs(y)
         dst_sobel = cv2.addWeighted(absX, 0.5, absY, 0.5, 0)
-        #num ,ret = cv2.connectedComponents(dst_sobel)
         return dst_sobel
     def Scharr(self):
         x = cv2.Scharr(self.img, cv2.CV_16S, 1, 0)  # X 方向
@@ -92,10 +102,12 @@ class opencv(QDialog):
         dst = cv2.Laplacian(self.img, cv2.CV_16S, ksize=3)
         dst_log = cv2.convertScaleAbs(dst)
         return dst_log
-    def warningBtn_clicked(self,num):
-        QMessageBox.warning(self, '结果', '识别到有{}层地层'.format(num),QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Save)
-if __name__ == '__main__':
-    a = QApplication(sys.argv)
-    w = opencv()
-    w.show()
-    sys.exit(a.exec_())
+    def Canny(self):
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(3, 3))
+        eroded = cv2.erode(self.img,kernel)
+        edge_output = cv.Canny(eroded, 0, 150)
+        dst_canny = cv.bitwise_and(self.img, self.img, mask=edge_output)
+        return dst_canny
+
+
+
